@@ -56,16 +56,20 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         }
       } else if (isLoginMode) {
         // Handle login
-        await login(email, password);
-        setShowTwoFactor(true);
+        const success = await login(email, password);
+        if (success) {
+          setShowTwoFactor(true);
+        }
       } else {
         // Handle registration
         if (password.length < 8) {
           setError('Password must be at least 8 characters');
           return;
         }
-        await register(email, password, name);
-        setShowTwoFactor(true);
+        const success = await register(email, password, name);
+        if (success) {
+          setShowTwoFactor(true);
+        }
       }
     } catch (err) {
       setError((err as Error).message || 'An error occurred');
@@ -81,20 +85,20 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
       
       {/* Modal content */}
       <div 
-        className="relative w-full max-w-md p-6 mx-4 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl animate-zoom-in"
+        className="relative w-full max-w-md p-6 mx-4 bg-black border border-white/10 rounded-2xl shadow-2xl animate-zoom-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button 
           onClick={handleClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors"
           aria-label="Close"
         >
           <X size={24} />
         </button>
         
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-white">
             {showTwoFactor 
               ? t('verify') 
               : isLoginMode 
@@ -104,7 +108,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         </div>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-lg text-sm">
+          <div className="mb-4 p-3 bg-ducati/10 border border-ducati/20 text-ducati rounded-lg text-sm">
             {error}
           </div>
         )}
@@ -113,7 +117,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
           {showTwoFactor ? (
             // 2FA verification form
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" htmlFor="twoFactorCode">
+              <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="twoFactorCode">
                 {t('twoFactorCode')}
               </label>
               <input
@@ -122,12 +126,12 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                 value={twoFactorCode}
                 onChange={(e) => setTwoFactorCode(e.target.value)}
                 placeholder="000000"
-                className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent"
+                className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent text-white"
                 required
                 maxLength={6}
                 pattern="\d{6}"
               />
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-sm text-gray-400">
                 Enter the 6-digit verification code from your authenticator app.
               </p>
             </div>
@@ -136,7 +140,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
             <>
               {!isLoginMode && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" htmlFor="name">
+                  <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="name">
                     Name
                   </label>
                   <input
@@ -144,14 +148,14 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent"
+                    className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent text-white"
                     required={!isLoginMode}
                   />
                 </div>
               )}
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" htmlFor="email">
+                <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="email">
                   {t('email')}
                 </label>
                 <input
@@ -159,13 +163,13 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent"
+                  className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent text-white"
                   required
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" htmlFor="password">
+                <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="password">
                   {t('password')}
                 </label>
                 <input
@@ -173,7 +177,7 @@ const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent"
+                  className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-ducati focus:border-transparent text-white"
                   required
                   minLength={8}
                 />

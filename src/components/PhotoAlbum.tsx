@@ -20,7 +20,7 @@ const PhotoAlbum = () => {
   const [albums, setAlbums] = useState<Album[]>([
     { id: '1', name: 'Ducati', photos: [] },
   ]);
-  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
+  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(albums[0]);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showCreateAlbum, setShowCreateAlbum] = useState(false);
@@ -184,7 +184,7 @@ const PhotoAlbum = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg">
+    <div className="bg-black border border-white/10 p-6 rounded-xl shadow-lg">
       <div className="flex flex-col space-y-4">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-2xl font-bold">{t('photoAlbum')}</h2>
@@ -198,7 +198,7 @@ const PhotoAlbum = () => {
                 className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                   selectedAlbum?.id === album.id
                     ? 'bg-ducati text-white'
-                    : 'bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700'
+                    : 'bg-white/10 hover:bg-white/20'
                 }`}
               >
                 {album.name}
@@ -212,7 +212,7 @@ const PhotoAlbum = () => {
                   value={newAlbumName}
                   onChange={(e) => setNewAlbumName(e.target.value)}
                   placeholder="Album name"
-                  className="px-3 py-1 rounded-l-full text-sm border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-ducati"
+                  className="px-3 py-1 rounded-l-full text-sm bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-ducati"
                   autoFocus
                 />
                 <button
@@ -223,7 +223,7 @@ const PhotoAlbum = () => {
                 </button>
                 <button
                   onClick={() => setShowCreateAlbum(false)}
-                  className="ml-1 p-1 rounded-full text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  className="ml-1 p-1 rounded-full text-gray-400 hover:text-gray-200"
                 >
                   <X size={16} />
                 </button>
@@ -231,7 +231,7 @@ const PhotoAlbum = () => {
             ) : (
               <button
                 onClick={() => setShowCreateAlbum(true)}
-                className="px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-800 text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors flex items-center gap-1"
+                className="px-3 py-1 rounded-full bg-white/10 text-sm font-medium hover:bg-white/20 transition-colors flex items-center gap-1"
               >
                 <FolderPlus size={16} />
                 <span>{t('createAlbum')}</span>
@@ -252,7 +252,7 @@ const PhotoAlbum = () => {
               className={`relative border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all ${
                 isDragging
                   ? 'border-ducati bg-ducati/5'
-                  : 'border-gray-300 dark:border-gray-700 hover:border-ducati hover:bg-ducati/5'
+                  : 'border-white/20 hover:border-ducati hover:bg-ducati/5'
               }`}
             >
               <input
@@ -269,14 +269,14 @@ const PhotoAlbum = () => {
                   size={40} 
                   className={`${isDragging ? 'text-ducati' : 'text-gray-400'}`} 
                 />
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-gray-400">
                   {t('dragAndDrop')}
                 </p>
               </div>
               
               {uploadProgress !== null && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl">
-                  <div className="w-2/3 bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                  <div className="w-2/3 bg-gray-700 rounded-full h-2.5 overflow-hidden">
                     <div
                       className="bg-ducati h-2.5 transition-all duration-200 ease-out"
                       style={{ width: `${uploadProgress}%` }}
@@ -292,7 +292,7 @@ const PhotoAlbum = () => {
                 {selectedAlbum.photos.map((photo) => (
                   <div
                     key={photo.id}
-                    className="group relative aspect-square rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800"
+                    className="group relative aspect-square rounded-lg overflow-hidden bg-white/5"
                   >
                     <img
                       src={photo.url}
@@ -315,14 +315,14 @@ const PhotoAlbum = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center space-y-2 py-12 text-gray-500 dark:text-gray-400">
+              <div className="flex flex-col items-center justify-center space-y-2 py-12 text-gray-400">
                 <Image size={48} className="opacity-30" />
                 <p>No photos in this album yet</p>
               </div>
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center space-y-2 py-12 text-gray-500 dark:text-gray-400">
+          <div className="flex flex-col items-center justify-center space-y-2 py-12 text-gray-400">
             <FolderPlus size={48} className="opacity-30" />
             <p>Select or create an album to get started</p>
           </div>

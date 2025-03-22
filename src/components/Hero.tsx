@@ -25,8 +25,8 @@ const Hero = () => {
     setImageLoaded(true);
   };
 
-  // Placeholder image URL - in a real project, use a real image of a Ducati Panigale V4S
-  const imageUrl = "https://images.unsplash.com/photo-1605354180969-0f3fdef90d3c?q=80&w=2670&auto=format&fit=crop";
+  // Image URL for the Ducati Panigale V4S
+  const imageUrl = "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=2670&auto=format&fit=crop";
   
   return (
     <div className="relative w-full h-screen overflow-hidden">

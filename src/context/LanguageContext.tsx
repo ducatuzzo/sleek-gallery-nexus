@@ -1,140 +1,107 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 
-type Language = 'de' | 'en' | 'it';
-
-interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
-}
-
-// Translations for each language
-const translations: Record<Language, Record<string, string>> = {
-  de: {
-    welcomeTitle: 'Willkommen',
-    welcomeSubtitle: 'Entdecken Sie die Ducati Panigale V4S',
-    login: 'Anmelden',
-    register: 'Registrieren',
-    weather: 'Wetter in Zollikofen',
-    photoAlbum: 'Fotoalbum',
-    hobbies: 'Hobbys',
-    professional: 'Beruflich',
-    contact: 'Kontakt',
-    email: 'E-Mail',
-    password: 'Passwort',
-    twoFactorCode: '2FA Code',
-    verify: 'Bestätigen',
-    logout: 'Abmelden',
-    uploadPhotos: 'Fotos hochladen',
-    createAlbum: 'Album erstellen',
-    dragAndDrop: 'Ziehen Sie Ihre Bilder hierher oder klicken Sie, um auszuwählen',
-    temperature: 'Temperatur',
-    condition: 'Wetterlage',
-    language: 'Sprache',
-    germanLanguage: 'Deutsch',
-    englishLanguage: 'Englisch',
-    italianLanguage: 'Italienisch',
-    dashboard: 'Dashboard',
-    welcomeBack: 'Willkommen zurück',
-    continueToSite: 'Zur Website',
-  },
+// Language translations
+const translations = {
   en: {
-    welcomeTitle: 'Welcome',
-    welcomeSubtitle: 'Discover the Ducati Panigale V4S',
+    welcomeTitle: 'The Ultimate Riding Experience',
+    welcomeSubtitle: 'Discover the pure thrill of a Ducati V4S - where technology meets passion.',
+    dashboard: 'Dashboard',
+    logout: 'Logout',
     login: 'Login',
-    register: 'Register',
-    weather: 'Weather in Zollikofen',
-    photoAlbum: 'Photo Album',
-    hobbies: 'Hobbies',
-    professional: 'Professional',
+    weather: 'Weather',
     contact: 'Contact',
+    photoAlbum: 'Photo Album',
+    dragAndDrop: 'Drag and drop your photos here or click to browse',
+    createAlbum: 'Create Album',
     email: 'Email',
     password: 'Password',
-    twoFactorCode: '2FA Code',
     verify: 'Verify',
-    logout: 'Logout',
-    uploadPhotos: 'Upload Photos',
-    createAlbum: 'Create Album',
-    dragAndDrop: 'Drag and drop your images here or click to select',
-    temperature: 'Temperature',
-    condition: 'Condition',
+    twoFactorCode: 'Verification Code',
     language: 'Language',
     germanLanguage: 'German',
     englishLanguage: 'English',
     italianLanguage: 'Italian',
+  },
+  de: {
+    welcomeTitle: 'Das ultimative Fahrerlebnis',
+    welcomeSubtitle: 'Entdecke den puren Nervenkitzel einer Ducati V4S - wo Technologie auf Leidenschaft trifft.',
     dashboard: 'Dashboard',
-    welcomeBack: 'Welcome back',
-    continueToSite: 'Continue to site',
+    logout: 'Abmelden',
+    login: 'Anmelden',
+    weather: 'Wetter',
+    contact: 'Kontakt',
+    photoAlbum: 'Fotoalbum',
+    dragAndDrop: 'Ziehe deine Fotos hierher oder klicke zum Durchsuchen',
+    createAlbum: 'Album erstellen',
+    email: 'E-Mail',
+    password: 'Passwort',
+    verify: 'Verifizieren',
+    twoFactorCode: 'Verifizierungscode',
+    language: 'Sprache',
+    germanLanguage: 'Deutsch',
+    englishLanguage: 'Englisch',
+    italianLanguage: 'Italienisch',
   },
   it: {
-    welcomeTitle: 'Benvenuto',
-    welcomeSubtitle: 'Scopri la Ducati Panigale V4S',
-    login: 'Accesso',
-    register: 'Registrati',
-    weather: 'Meteo a Zollikofen',
-    photoAlbum: 'Album fotografico',
-    hobbies: 'Hobby',
-    professional: 'Professionale',
+    welcomeTitle: 'L\'esperienza di guida definitiva',
+    welcomeSubtitle: 'Scopri l\'emozione pura di una Ducati V4S - dove la tecnologia incontra la passione.',
+    dashboard: 'Dashboard',
+    logout: 'Disconnetti',
+    login: 'Accedi',
+    weather: 'Meteo',
     contact: 'Contatto',
+    photoAlbum: 'Album fotografico',
+    dragAndDrop: 'Trascina qui le tue foto o clicca per sfogliare',
+    createAlbum: 'Crea album',
     email: 'Email',
     password: 'Password',
-    twoFactorCode: 'Codice 2FA',
     verify: 'Verifica',
-    logout: 'Disconnetti',
-    uploadPhotos: 'Carica foto',
-    createAlbum: 'Crea album',
-    dragAndDrop: 'Trascina e rilascia qui le tue immagini o clicca per selezionare',
-    temperature: 'Temperatura',
-    condition: 'Condizione',
+    twoFactorCode: 'Codice di verifica',
     language: 'Lingua',
     germanLanguage: 'Tedesco',
     englishLanguage: 'Inglese',
     italianLanguage: 'Italiano',
-    dashboard: 'Dashboard',
-    welcomeBack: 'Bentornato',
-    continueToSite: 'Continua al sito',
   },
 };
 
+type Language = 'en' | 'de' | 'it';
+type TranslationKey = keyof typeof translations.en;
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  t: (key: TranslationKey) => string;
+}
+
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Try to detect browser language, fallback to 'de'
-  const detectBrowserLanguage = (): Language => {
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  // Detect browser language or use stored preference
+  const getBrowserLanguage = (): Language => {
+    const storedLanguage = localStorage.getItem('language') as Language | null;
+    
+    if (storedLanguage && ['en', 'de', 'it'].includes(storedLanguage)) {
+      return storedLanguage;
+    }
+    
     const browserLang = navigator.language.split('-')[0];
-    
-    if (browserLang === 'de') return 'de';
-    if (browserLang === 'it') return 'it';
-    if (browserLang === 'en') return 'en';
-    
-    return 'de'; // Default to German
+    return (browserLang === 'de' || browserLang === 'it') ? browserLang as Language : 'en';
   };
-
-  const [language, setLanguageState] = useState<Language>(() => {
-    // Check if language is saved in localStorage
-    const savedLang = localStorage.getItem('v4s_language') as Language;
-    return savedLang || detectBrowserLanguage();
-  });
-
-  // Update localStorage when language changes
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('v4s_language', lang);
+  
+  const [language, setLanguage] = useState<Language>(getBrowserLanguage);
+  
+  const changeLanguage = (newLanguage: Language) => {
+    setLanguage(newLanguage);
+    localStorage.setItem('language', newLanguage);
   };
-
-  // Function to get translation
-  const t = (key: string): string => {
-    return translations[language][key] || key;
+  
+  const t = (key: TranslationKey): string => {
+    return translations[language][key] || translations.en[key] || key;
   };
-
-  useEffect(() => {
-    // Update HTML lang attribute when language changes
-    document.documentElement.lang = language;
-  }, [language]);
-
+  
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage: changeLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
